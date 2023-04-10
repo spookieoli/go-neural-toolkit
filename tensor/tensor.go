@@ -1,5 +1,10 @@
 package tensor
 
+// The type interface is the base interface for all tensors.
+type Tensor interface {
+	GetShape(int) int
+}
+
 // Tensor1D is a 1D tensor.
 type Tensor1D struct {
 	// Shape of the Tensor
