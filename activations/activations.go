@@ -19,16 +19,17 @@ func (l *Losses) Tanh(f *float64) float64 {
 }
 
 // Softmax function
-func (l *Losses) Softmax(f *[]float64) *[]float64 {
+func (l *Losses) Softmax(f *[]float64) []float64 {
 	// The softmax function is defined like the tensoflow softmax function
 	var sum float64
+	ret := []float64{}
 	for _, v := range *f {
 		sum += math.Exp(v)
 	}
-	for i, v := range *f {
-		(*f)[i] = math.Exp(v) / sum
+	for _, v := range *f {
+		ret = append(ret, math.Exp(v)/sum)
 	}
-	return f
+	return ret
 }
 
 // Relu function
@@ -41,10 +42,10 @@ func (l *Losses) Relu(f *float64) float64 {
 }
 
 // LeakyRelu function
-func (l *Losses) LeakyRelu(f *float64, alpha float64) float64 {
+func (l *Losses) LeakyRelu(f *float64) float64 {
 	// The leaky relu function is defined like the tensoflow leaky relu function
 	if *f < 0 {
-		return alpha * *f
+		return 0.01 * *f
 	}
 	return *f
 }

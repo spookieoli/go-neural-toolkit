@@ -12,4 +12,10 @@ type Layer interface {
 	GetUnits() int
 	// UseBias returns true if the layer uses a bias.
 	UseBias() bool
+	//InitWeights initializes the weights of the layer.
+	InitWeights()
+	//NextLayer returns the next layer.
+	NextLayer() Layer
+	//Get gets the values of the previous layer.
+	Get(layer Layer) Layer
 }
