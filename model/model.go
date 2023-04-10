@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"go-neural-toolkit/layer"
 	"go-neural-toolkit/workerpool"
 )
@@ -14,7 +15,7 @@ type Model struct {
 func NewModel(layers []layer.Layer, worker int) (*Model, error) {
 	// Guard clause
 	if len(layers) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("No Layers given")
 	}
 	// TODO: More Checks - eg: every Model needs an input layer etc.
 	return &Model{
