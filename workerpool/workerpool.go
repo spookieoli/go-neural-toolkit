@@ -5,7 +5,7 @@ import "sync"
 // The Payload to send to the worker threads
 type Payload struct {
 	// The function to be executed
-	F interface{}
+	F func(...any) any
 	// The Data to be sent to the functions
 	D []interface{}
 	//a waitgroup pointer to know when all the work is done
@@ -45,7 +45,7 @@ func NewWorkerPool(numWorkers int) *WorkerPool {
 				// Get the payload
 				payload := <-wp.In
 				// Execute the functions on the data
-				result := payload.F.(func(...interface{}) interface{})(payload.D...)
+				result := payload.F(payload.D...)
 				// Send the result back
 				wp.Out <- ResultSet{Results: result}
 				// Signal that the work is done
