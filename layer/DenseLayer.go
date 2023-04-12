@@ -24,11 +24,21 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l := &DenseLayer{
 		Units: units, UseBias: useBias, Name: name,
 	}
+	// Create the weights of the layer.
+	l.InitWeights()
+	// Set the activation
+	l.SetActivation(activation)
 	// Add this Layer as next Layer in the previous Layer
 	previous.SetNextLayer(l)
 	// Add the previous Layer as Before Layer in this Layer
 	l.SetBefore(previous)
 	return l
+}
+
+// SetActivation sets the activation function of the layer.
+func (d *DenseLayer) SetActivation(activation string) {
+	// TODO IMPLEMENT
+	return
 }
 
 // SetNextLayer sets the next layer.
@@ -53,7 +63,7 @@ func (d *DenseLayer) GetBefore() Layer {
 
 // initWeights initializes the weights of the layer.
 func (d *DenseLayer) InitWeights() {
-	// TODO IMPLEMENT
+	d.Weights = tensor.CreateTensor2D([]int{d.Units, d.Before[0].GetUnits()})
 	return
 }
 
