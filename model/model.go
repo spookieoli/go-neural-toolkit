@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"go-neural-toolkit/layer"
+	"go-neural-toolkit/tensor"
 	"go-neural-toolkit/workerpool"
 )
 
@@ -10,6 +11,7 @@ type Model struct {
 	// The layers of the model.
 	Layers     []layer.Layer
 	Workerpool *workerpool.WorkerPool
+	Output     tensor.Tensor
 }
 
 func NewModel(layers []layer.Layer, worker int) (*Model, error) {
