@@ -1,6 +1,10 @@
 package layer
 
-import "go-neural-toolkit/tensor"
+import (
+	"go-neural-toolkit/activations"
+	"go-neural-toolkit/tensor"
+	"reflect"
+)
 
 type DenseLayer struct {
 	// The name of the layer.
@@ -17,6 +21,8 @@ type DenseLayer struct {
 	Before []Layer
 	// If the layer uses a bias.
 	UseBias bool
+	// Activation function of the layer.
+	Activation func(...any) any
 }
 
 // Dense creates the Dense Layer.
@@ -37,8 +43,14 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 
 // SetActivation sets the activation function of the layer.
 func (d *DenseLayer) SetActivation(activation string) {
-	// TODO IMPLEMENT
-	return
+	// Using refelect to get the function from the activation package.
+	o := reflect.ValueOf(activations.Activation)
+	m := o.MethodByName(activation)
+	if !m.IsValid() {
+		d.Activation = m.Interface().(func(...any) any)
+	} else {
+		d.Activation = nil
+	}
 }
 
 // SetNextLayer sets the next layer.
