@@ -51,18 +51,18 @@ func (d *DenseLayer) GetBefore() Layer {
 	return d.Before[0] // Dense Layer can only have one previous Layer
 }
 
-// initWeights initializes the weights of the layer.
+// InitWeights initializes the weights of the layer.
 func (d *DenseLayer) InitWeights() {
 	// TODO IMPLEMENT
 	return
 }
 
-// USeBias returns true if the layer uses a bias.
+// GetUseBias returns true if the layer uses a bias.
 func (d *DenseLayer) GetUseBias() bool {
 	return d.UseBias
 }
 
-// Getweights returns the weights of the layer.
+// GetWeights returns the weights of the layer.
 func (d *DenseLayer) GetWeights() tensor.Tensor {
 	return d.Weights
 }
