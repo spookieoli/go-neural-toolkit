@@ -13,7 +13,7 @@ type Tensor1D struct {
 	Data []float64
 }
 
-func (t *Tensor1D) CreateTensor1D(shape int) *Tensor1D {
+func CreateTensor1D(shape int) *Tensor1D {
 	return &Tensor1D{
 		Data: make([]float64, shape), Shape: shape,
 	}
@@ -27,7 +27,7 @@ type Tensor2D struct {
 	Data [][]float64
 }
 
-func (t *Tensor2D) CreateTensor2D(shape []int) *Tensor2D {
+func CreateTensor2D(shape []int) *Tensor2D {
 	tensor := &Tensor2D{
 		Data: make([][]float64, shape[0]), Shape: shape,
 	}
@@ -36,4 +36,8 @@ func (t *Tensor2D) CreateTensor2D(shape []int) *Tensor2D {
 		tensor.Data[i] = make([]float64, shape[1])
 	}
 	return tensor
+}
+
+func (t *Tensor2D) GetShape(i int) int {
+	return t.Shape[i]
 }

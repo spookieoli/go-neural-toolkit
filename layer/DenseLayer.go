@@ -1,6 +1,10 @@
 package layer
 
-import "go-neural-toolkit/tensor"
+import (
+	"go-neural-toolkit/activations"
+	"go-neural-toolkit/tensor"
+	"reflect"
+)
 
 type DenseLayer struct {
 	// The name of the layer.
@@ -17,6 +21,8 @@ type DenseLayer struct {
 	Before []Layer
 	// If the layer uses a bias.
 	UseBias bool
+	// Activation function of the layer.
+	Activation func(...any) any
 }
 
 // Dense creates the Dense Layer.
@@ -24,11 +30,27 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l := &DenseLayer{
 		Units: units, UseBias: useBias, Name: name,
 	}
+	// Create the weights of the layer.
+	l.InitWeights()
+	// Set the activation
+	l.SetActivation(activation)
 	// Add this Layer as next Layer in the previous Layer
 	previous.SetNextLayer(l)
 	// Add the previous Layer as Before Layer in this Layer
 	l.SetBefore(previous)
 	return l
+}
+
+// SetActivation sets the activation function of the layer.
+func (d *DenseLayer) SetActivation(activation string) {
+	// Using refelect to get the function from the activation package.
+	o := reflect.ValueOf(activations.Activation)
+	m := o.MethodByName(activation)
+	if !m.IsValid() {
+		d.Activation = m.Interface().(func(...any) any)
+	} else {
+		d.Activation = nil
+	}
 }
 
 // SetNextLayer sets the next layer.
@@ -53,7 +75,7 @@ func (d *DenseLayer) GetBefore() Layer {
 
 // InitWeights initializes the weights of the layer.
 func (d *DenseLayer) InitWeights() {
-	// TODO IMPLEMENT
+	d.Weights = tensor.CreateTensor2D([]int{d.Units, d.Before[0].GetUnits()})
 	return
 }
 
