@@ -3,7 +3,7 @@ package workerpool
 import "sync"
 
 // The Payload to send to the worker threads
-type Payload struct {
+type Workload struct {
 	// The function to be executed
 	F func(any)
 	// The Data to be sent to the functions
@@ -18,7 +18,7 @@ type WorkerPool struct {
 	// Number of Worker Threads (goroutines)
 	NumWorkers int
 	// Channel for the worker threads
-	In chan Payload
+	In chan Workload
 }
 
 // NewWorkerPool creates a new worker pool
@@ -26,7 +26,7 @@ func NewWorkerPool(numWorkers int) *WorkerPool {
 	// Create the chans
 	wp := &WorkerPool{
 		NumWorkers: numWorkers,
-		In:         make(chan Payload),
+		In:         make(chan Workload),
 	}
 
 	// Start the worker threads
@@ -34,11 +34,11 @@ func NewWorkerPool(numWorkers int) *WorkerPool {
 		go func() {
 			for {
 				// Get the payload
-				payload := <-wp.In
+				workload := <-wp.In
 				// Execute the functions on the data
-				payload.F(payload.D)
+				workload.F(workload.D)
 				// Signal that the work is done
-				payload.Wg.Done()
+				workload.Wg.Done()
 			}
 		}()
 	}

@@ -38,7 +38,6 @@ func CreateTensor2D(shape []int) *Tensor2D {
 	tensor := &Tensor2D{
 		Data: make([][]float64, shape[0]), Shape: shape,
 	}
-
 	for i := 0; i < shape[0]; i++ {
 		tensor.Data[i] = make([]float64, shape[1])
 	}

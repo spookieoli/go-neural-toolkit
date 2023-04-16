@@ -18,7 +18,7 @@ type InputLayer struct {
 	// If the layer uses a bias.
 	UseBias bool
 	// Activation function of the layer.
-	Activation func(any) any
+	Activation func(any)
 }
 
 // Input creates the Input Layer.
@@ -68,7 +68,7 @@ func (i *InputLayer) GetNextLayer() []Layer {
 }
 
 // GetBefore gets the values of the previous layer.
-func (i *InputLayer) GetBefore() Layer {
+func (i *InputLayer) GetBefore() []Layer {
 	return nil // Input Layer has no previous Layer
 }
 

@@ -4,6 +4,7 @@ import (
 	"go-neural-toolkit/activations"
 	"go-neural-toolkit/tensor"
 	"reflect"
+	"strings"
 )
 
 type DenseLayer struct {
@@ -22,7 +23,7 @@ type DenseLayer struct {
 	// If the layer uses a bias.
 	UseBias bool
 	// Activation function of the layer.
-	Activation func(any) any
+	Activation func(any)
 }
 
 // Dense creates the Dense Layer.
@@ -30,26 +31,25 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l := &DenseLayer{
 		Units: units, UseBias: useBias, Name: name,
 	}
+	// Add the previous Layer as Before Layer in this Layer
+	l.SetBefore(previous)
 	// Create the weights of the layer.
 	l.InitWeights()
 	// Set the Output of the Layer
 	l.Output = tensor.CreateTensor1D(l.Units)
-	// Set the activation
-	l.SetActivation(activation)
+	// Set the activation // TODO: cases not working for me - why? Not importable?
+	l.SetActivation(strings.Title(activation))
 	// Add this Layer as next Layer in the previous Layer
 	previous.SetNextLayer(l)
-	// Add the previous Layer as Before Layer in this Layer
-	l.SetBefore(previous)
 	return l
 }
 
 // SetActivation sets the activation function of the layer.
 func (d *DenseLayer) SetActivation(activation string) {
 	// Using refelect to get the function from the activation package.
-	o := reflect.ValueOf(activations.Activation)
-	m := o.MethodByName(activation)
-	if !m.IsValid() {
-		d.Activation = m.Interface().(func(any) any)
+	o := reflect.ValueOf(&activations.Activation).MethodByName(activation)
+	if o.IsValid() {
+		d.Activation = o.Interface().(func(any))
 	} else {
 		d.Activation = nil
 	}
@@ -71,8 +71,8 @@ func (d *DenseLayer) GetNextLayer() []Layer {
 }
 
 // GetBefore gets the values of the previous layer.
-func (d *DenseLayer) GetBefore() Layer {
-	return d.Before[0] // Dense Layer can only have one previous Layer
+func (d *DenseLayer) GetBefore() []Layer {
+	return d.Before // Dense Layer can only have one previous Layer
 }
 
 // InitWeights initializes the weights of the layer.

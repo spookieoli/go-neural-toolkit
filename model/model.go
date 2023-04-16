@@ -11,17 +11,8 @@ type Model struct {
 	// The layers of the model.
 	Layers     []layer.Layer
 	Workerpool *workerpool.WorkerPool
+	LayerArray []layer.Layer // This Array will be used to store the layers in the right order.
 	Output     tensor.Tensor
-}
-
-// CheckIsInputLayer if the given layers are of Type InputLayer
-func CheckIsInputLayer(layers []layer.Layer) bool {
-	for _, l := range layers {
-		if _, ok := l.(*layer.InputLayer); !ok {
-			return false
-		}
-	}
-	return true
 }
 
 // NewModel creates a new model. NewModel takes only the Input Layers of the Model and the number of worker threads.
@@ -34,11 +25,64 @@ func NewModel(layers []layer.Layer, worker int) (*Model, error) {
 	if CheckIsInputLayer(layers) == false {
 		return nil, fmt.Errorf("No Input Layer given")
 	}
+	// Create the Layer Array
+	la := make([]layer.Layer, 0, 20)
+	// Add the Input Layers to the Layer Array
+	for _, l := range layers {
+		la = append(la, l)
+	}
+	// Fill rest of the Layers in the Layer Array
+	FillLayerArray(layers, la)
 	// Create the Model
 	return &Model{
 		Layers:     layers,
 		Workerpool: workerpool.NewWorkerPool(worker),
+		LayerArray: la,
 	}, nil
 }
 
-// TODO: Add the functions to create the model.
+// FillLayerArray creates the layer array.
+func FillLayerArray(layers []layer.Layer, la []layer.Layer) {
+	for _, l := range layers {
+		if (CheckIfLayerExists(l, la) == false || l.GetBefore() != nil) && CheckIfArrExistsInArr(l.GetBefore(), la) == true {
+			la = append(la, l)
+			FillLayerArray(l.GetNextLayer(), la)
+		}
+	}
+}
+
+// CheckIsInputLayer if the given layers are of Type InputLayer
+func CheckIsInputLayer(layers []layer.Layer) bool {
+	for _, l := range layers {
+		if _, ok := l.(*layer.InputLayer); !ok {
+			return false
+		}
+	}
+	return true
+}
+
+// CheckIfLayerExists checks if the given layer exists in the layer array.
+func CheckIfLayerExists(layer layer.Layer, la []layer.Layer) bool {
+	for _, l := range la {
+		if l == layer {
+			return true
+		}
+	}
+	return false
+}
+
+// The CheckIfArrExistsInArr checks if the Layers already exist in the Layer Array.
+func CheckIfArrExistsInArr(layers []layer.Layer, la []layer.Layer) bool {
+	ba := []bool{}
+	for _, l := range layers {
+		for _, l2 := range la {
+			if l == l2 {
+				ba = append(ba, true)
+			}
+		}
+	}
+	if len(ba) == len(layers) {
+		return true
+	}
+	return false
+}

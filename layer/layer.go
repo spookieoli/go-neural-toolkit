@@ -17,7 +17,7 @@ type Layer interface {
 	//GetNextLayer returns the next layer.
 	GetNextLayer() []Layer
 	//GetBefore gets the values of the previous layer.
-	GetBefore() Layer
+	GetBefore() []Layer
 	// SetNextLayer sets the next layer.
 	SetNextLayer(Layer)
 	// SetBefore sets the previous layer.
