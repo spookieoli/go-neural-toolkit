@@ -6,6 +6,14 @@ import "math"
 type Activations struct {
 }
 
+// global activation variable
+var Activation Activations
+
+// Init the activations
+func init() {
+	Activation = Activations{}
+}
+
 // Sigmoid function
 func (l *Activations) Sigmoid(f any) {
 	// The sigmoid function is defined like the tensoflow sigmoid function

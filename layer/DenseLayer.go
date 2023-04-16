@@ -32,6 +32,8 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	}
 	// Create the weights of the layer.
 	l.InitWeights()
+	// Set the Output of the Layer
+	l.Output = tensor.CreateTensor1D(l.Units)
 	// Set the activation
 	l.SetActivation(activation)
 	// Add this Layer as next Layer in the previous Layer

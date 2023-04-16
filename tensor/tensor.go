@@ -2,7 +2,7 @@ package tensor
 
 // The type interface is the base interface for all tensors.
 type Tensor interface {
-	GetShape(int) int
+	GetShape() any
 }
 
 // Tensor1D is a 1D tensor.
@@ -13,10 +13,16 @@ type Tensor1D struct {
 	Data []float64
 }
 
+// CreateTensor1D creates a new 1D tensor.
 func CreateTensor1D(shape int) *Tensor1D {
 	return &Tensor1D{
 		Data: make([]float64, shape), Shape: shape,
 	}
+}
+
+// GetShape returns the shape of the tensor.
+func (t *Tensor1D) GetShape() any {
+	return t.Shape
 }
 
 // Tensor2D is a 2D tensor.
@@ -27,6 +33,7 @@ type Tensor2D struct {
 	Data [][]float64
 }
 
+// CreateTensor2D creates a new 2D tensor.
 func CreateTensor2D(shape []int) *Tensor2D {
 	tensor := &Tensor2D{
 		Data: make([][]float64, shape[0]), Shape: shape,
@@ -38,6 +45,7 @@ func CreateTensor2D(shape []int) *Tensor2D {
 	return tensor
 }
 
-func (t *Tensor2D) GetShape(i int) int {
-	return t.Shape[i]
+// GetShape returns the shape of the tensor.
+func (t *Tensor2D) GetShape() any {
+	return t.Shape
 }
