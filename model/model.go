@@ -14,7 +14,7 @@ type Model struct {
 	Output     tensor.Tensor
 }
 
-// Check if the given layers are of Type InputLayer
+// CheckIsInputLayer if the given layers are of Type InputLayer
 func CheckIsInputLayer(layers []layer.Layer) bool {
 	for _, l := range layers {
 		if _, ok := l.(*layer.InputLayer); !ok {
@@ -40,3 +40,5 @@ func NewModel(layers []layer.Layer, worker int) (*Model, error) {
 		Workerpool: workerpool.NewWorkerPool(worker),
 	}, nil
 }
+
+// TODO: Add the functions to create the model.
