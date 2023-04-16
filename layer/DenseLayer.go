@@ -22,7 +22,7 @@ type DenseLayer struct {
 	// If the layer uses a bias.
 	UseBias bool
 	// Activation function of the layer.
-	Activation func(...any) any
+	Activation func(any) any
 }
 
 // Dense creates the Dense Layer.
@@ -49,7 +49,7 @@ func (d *DenseLayer) SetActivation(activation string) {
 	o := reflect.ValueOf(activations.Activation)
 	m := o.MethodByName(activation)
 	if !m.IsValid() {
-		d.Activation = m.Interface().(func(...any) any)
+		d.Activation = m.Interface().(func(any) any)
 	} else {
 		d.Activation = nil
 	}
