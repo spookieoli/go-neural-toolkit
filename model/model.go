@@ -16,10 +16,12 @@ type ModelConfig struct {
 
 type Model struct {
 	// The layers of the model.
-	Layers     []layer.Layer
+	Layers []layer.Layer
+	// The WorkerPool of the Model.
 	Workerpool *workerpool.WorkerPool
+	// The LayerArray of the Model.
 	LayerArray []layer.Layer // This Array will be used to store the layers in the right order.
-	Output     tensor.Tensor
+	Loss       tensor.Tensor
 }
 
 // NewModel creates a new model. NewModel takes only the Input Layers of the Model and the number of worker threads.
