@@ -7,6 +7,13 @@ import (
 	"go-neural-toolkit/workerpool"
 )
 
+type ModelConfig struct {
+	// The InputLayers of the Model.
+	InputLayers []layer.Layer
+	// The OutputLayers of the Model
+	OutputLayers []layer.Layer
+}
+
 type Model struct {
 	// The layers of the model.
 	Layers     []layer.Layer
@@ -16,26 +23,26 @@ type Model struct {
 }
 
 // NewModel creates a new model. NewModel takes only the Input Layers of the Model and the number of worker threads.
-func NewModel(layers []layer.Layer, worker int) (*Model, error) {
+func NewModel(mc *ModelConfig, worker int) (*Model, error) {
 	// Guard clause
-	if len(layers) == 0 {
+	if len(mc.InputLayers) == 0 {
 		return nil, fmt.Errorf("No Layers given")
 	}
 	// Check if all Layers given are Inputlayers
-	if CheckIsInputLayer(layers) == false {
+	if CheckIsInputLayer(mc.InputLayers) == false {
 		return nil, fmt.Errorf("No Input Layer given")
 	}
 	// Create the Layer Array
 	la := make([]layer.Layer, 0, 20)
 	// Add the Input Layers to the Layer Array
-	for _, l := range layers {
+	for _, l := range mc.InputLayers {
 		la = append(la, l)
 	}
 	// Fill rest of the Layers in the Layer Array
-	FillLayerArray(layers, la)
+	FillLayerArray(mc.InputLayers, la)
 	// Create the Model
 	return &Model{
-		Layers:     layers,
+		Layers:     mc.InputLayers,
 		Workerpool: workerpool.NewWorkerPool(worker),
 		LayerArray: la,
 	}, nil
