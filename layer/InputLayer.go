@@ -86,3 +86,8 @@ func (i *InputLayer) SetBefore(l Layer) {
 func (i *InputLayer) GetOutput() tensor.Tensor {
 	return i.Output
 }
+
+// FeedForward the input through the layer.
+func (i *InputLayer) FeedForward() {
+	return
+}

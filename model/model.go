@@ -50,6 +50,16 @@ func NewModel(mc *ModelConfig, worker int) (*Model, error) {
 	}, nil
 }
 
+// The Predict Method
+func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
+	// Guard Clause
+	if len(input) != len(m.Layers) {
+		fmt.Println("Total Number of Input Layers and Input Tensors do not match")
+		return nil
+	}
+
+}
+
 // FillLayerArray creates the layer array.
 func FillLayerArray(layers []layer.Layer, la []layer.Layer) {
 	for _, l := range layers {

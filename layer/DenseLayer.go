@@ -3,6 +3,7 @@ package layer
 import (
 	"go-neural-toolkit/activations"
 	"go-neural-toolkit/tensor"
+	"go-neural-toolkit/workerpool"
 	"reflect"
 	"strings"
 )
@@ -104,4 +105,29 @@ func (d *DenseLayer) GetOutput() tensor.Tensor {
 // GetUnits returns the number of units in the layer.
 func (d *DenseLayer) GetUnits() int {
 	return d.Units
+}
+
+// DotProduct function calculates the dot product of two vectors.
+func (d *DenseLayer) DotProduct(f any) {
+	// f[0] is the input tensor, f[1] is the weight tensor, f[2] is the output tensor
+	sum := float64(0)
+	for idx, v := range *(f.([]*[]float64))[0] {
+		sum += v * (*(f.([]*[]float64))[1])[idx]
+	}
+	*f.(*float64) = sum
+}
+
+// FeedForward the input through the layer.
+func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
+	// switch the type of the former output type - we are expecting fpr a tensor.Tensor1D with Data = []float64
+	switch outputBefore := d.GetBefore()[0].GetOutput().(type) {
+	case *tensor.Tensor1D:
+		for idx, v := range d.Weights.(*tensor.Tensor2D).Data {
+			pool.In <- workerpool.Workload{F: d.DotProduct, D: []any{&outputBefore.Data, v, &d.Output.(*tensor.Tensor1D).Data[idx]}}
+		}
+	default:
+		// panic
+		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
+	}
+
 }

@@ -1,6 +1,9 @@
 package layer
 
-import "go-neural-toolkit/tensor"
+import (
+	"go-neural-toolkit/tensor"
+	"go-neural-toolkit/workerpool"
+)
 
 // The Layer interface is the base interface for all layers.
 type Layer interface {
@@ -24,4 +27,6 @@ type Layer interface {
 	SetBefore(Layer)
 	// GetOutput the output of the layer.
 	GetOutput() tensor.Tensor
+	// FeedForward the input through the layer.
+	FeedForward(pool workerpool.WorkerPool)
 }
