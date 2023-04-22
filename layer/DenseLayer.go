@@ -6,6 +6,7 @@ import (
 	"go-neural-toolkit/workerpool"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 type DenseLayer struct {
@@ -119,14 +120,19 @@ func (d *DenseLayer) DotProduct(f any) {
 
 // FeedForward the input through the layer.
 func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
+	// Create the WaitGroup
+	var wg *sync.WaitGroup
 	// switch the type of the former output type - we are expecting fpr a tensor.Tensor1D with Data = []float64
 	switch outputBefore := d.GetBefore()[0].GetOutput().(type) {
 	case *tensor.Tensor1D:
+		wg = &sync.WaitGroup{}
 		for idx, v := range d.Weights.(*tensor.Tensor2D).Data {
-			pool.In <- workerpool.Workload{F: d.DotProduct, D: []any{&outputBefore.Data, v, &d.Output.(*tensor.Tensor1D).Data[idx]}}
+			wg.Add(1)
+			pool.In <- workerpool.Workload{F: d.DotProduct, D: []any{&outputBefore.Data, v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
 		}
 	default:
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
 	}
+	wg.Wait()
 }
