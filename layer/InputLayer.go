@@ -1,6 +1,9 @@
 package layer
 
-import "go-neural-toolkit/tensor"
+import (
+	"go-neural-toolkit/tensor"
+	"go-neural-toolkit/workerpool"
+)
 
 type InputLayer struct {
 	// The name of the layer.
@@ -88,6 +91,6 @@ func (i *InputLayer) GetOutput() tensor.Tensor {
 }
 
 // FeedForward the input through the layer.
-func (i *InputLayer) FeedForward() {
+func (i *InputLayer) FeedForward(w workerpool.WorkerPool) {
 	return
 }

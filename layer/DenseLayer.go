@@ -129,5 +129,4 @@ func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
 	}
-
 }

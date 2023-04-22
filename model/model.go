@@ -57,7 +57,8 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 		fmt.Println("Total Number of Input Layers and Input Tensors do not match")
 		return nil
 	}
-
+	// TODO: NOT FINISHED YET
+	return nil
 }
 
 // FillLayerArray creates the layer array.
