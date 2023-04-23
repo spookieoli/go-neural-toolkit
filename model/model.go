@@ -36,12 +36,8 @@ func NewModel(mc *ModelConfig, worker int) (*Model, error) {
 	}
 	// Create the Layer Array
 	la := make([]layer.Layer, 0, 20)
-	// Add the Input Layers to the Layer Array
-	for _, l := range mc.InputLayers {
-		la = append(la, l)
-	}
 	// Fill rest of the Layers in the Layer Array
-	FillLayerArray(mc.InputLayers, la)
+	FillLayerArray(mc.InputLayers, &la)
 	// Create the Model
 	return &Model{
 		Layers:     mc.InputLayers,
@@ -62,10 +58,10 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 }
 
 // FillLayerArray creates the layer array.
-func FillLayerArray(layers []layer.Layer, la []layer.Layer) {
+func FillLayerArray(layers []layer.Layer, la *[]layer.Layer) {
 	for _, l := range layers {
-		if (CheckIfLayerExists(l, la) == false || l.GetBefore() != nil) && CheckIfArrExistsInArr(l.GetBefore(), la) == true {
-			la = append(la, l)
+		if (CheckIfLayerExists(l, *la) == false || l.GetBefore() != nil) && CheckIfArrExistsInArr(l.GetBefore(), *la) == true {
+			*la = append(*la, l)
 			FillLayerArray(l.GetNextLayer(), la)
 		}
 	}
