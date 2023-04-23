@@ -33,6 +33,10 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l := &DenseLayer{
 		Units: units, UseBias: useBias, Name: name,
 	}
+	// if useBias is true, we add 1 to the number of units.
+	if useBias {
+		l.Units++
+	}
 	// Add the previous Layer as Before Layer in this Layer
 	l.SetBefore(previous)
 	// Create the weights of the layer.
@@ -135,4 +139,10 @@ func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
 	}
 	wg.Wait()
+	// if useBias is true, we set the last value of the output to 1.
+	if d.UseBias {
+		d.Output.(*tensor.Tensor1D).Data[d.Units-1] = 1
+	}
+	// Now activate the output
+	// TODO: implement activation function
 }
