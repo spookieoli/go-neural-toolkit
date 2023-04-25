@@ -144,5 +144,10 @@ func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
 		d.Output.(*tensor.Tensor1D).Data[d.Units-1] = 1
 	}
 	// Now activate the output
-	// TODO: implement activation function
+	// TODO: Add logic for using diffrent activation functions
+	for idx, v := range d.Output.(*tensor.Tensor1D).Data {
+		wg.Add(1)
+		pool.In <- workerpool.Workload{F: d.Activation, D: []any{&v, d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
+	}
+	wg.Wait()
 }
