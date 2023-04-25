@@ -123,7 +123,7 @@ func (d *DenseLayer) DotProduct(f any) {
 }
 
 // FeedForward the input through the layer.
-func (d *DenseLayer) FeedForward(pool workerpool.WorkerPool) {
+func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 	// Create the WaitGroup
 	var wg *sync.WaitGroup
 	// switch the type of the former output type - we are expecting fpr a tensor.Tensor1D with Data = []float64

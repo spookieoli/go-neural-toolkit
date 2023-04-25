@@ -28,5 +28,5 @@ type Layer interface {
 	// GetOutput the output of the layer.
 	GetOutput() tensor.Tensor
 	// FeedForward the input through the layer.
-	FeedForward(pool workerpool.WorkerPool)
+	FeedForward(pool *workerpool.WorkerPool)
 }

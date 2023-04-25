@@ -55,6 +55,7 @@ func (t *Tensor2D) GetShape() any {
 	return t.Shape
 }
 
+// GetData the Data of the tensor.
 func (t *Tensor2D) GetData() any {
 	return t.Data
 }

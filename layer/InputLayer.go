@@ -91,6 +91,11 @@ func (i *InputLayer) GetOutput() tensor.Tensor {
 }
 
 // FeedForward the input through the layer.
-func (i *InputLayer) FeedForward(w workerpool.WorkerPool) {
+func (i *InputLayer) FeedForward(w *workerpool.WorkerPool) {
 	return
+}
+
+// Set the Output of the Input Layer.
+func (i *InputLayer) SetOutput(t tensor.Tensor) {
+	i.Output = t
 }
