@@ -54,6 +54,7 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 		return nil
 	}
 	// TODO: NOT FINISHED YET
+	fmt.Println("Predict Method not finished yet")
 	return nil
 }
 

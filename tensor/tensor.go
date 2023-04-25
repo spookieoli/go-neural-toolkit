@@ -26,7 +26,7 @@ func (t *Tensor1D) GetShape() any {
 	return t.Shape
 }
 
-// return the Data of the tensor.
+// GetData the Data of the tensor.
 func (t *Tensor1D) GetData() any {
 	return t.Data
 }
