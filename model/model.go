@@ -53,10 +53,12 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 		fmt.Println("Total Number of Input Layers and Input Tensors do not match")
 		return nil
 	}
+
 	// Insert the Input to the Input Layers
 	for i, l := range m.Layers {
 		l.(*layer.InputLayer).SetOutput(input[i])
 	}
+
 	// TODO: NOT FINISHED YET
 	for _, l := range m.LayerArray {
 		l.FeedForward(m.Workerpool)

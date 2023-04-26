@@ -119,7 +119,7 @@ func (d *DenseLayer) DotProduct(f any) {
 	for idx, v := range *(f.([]*[]float64))[0] {
 		sum += v * (*(f.([]*[]float64))[1])[idx]
 	}
-	*f.(*float64) = sum
+	(*(f.([]*[]float64))[2])[0] = sum
 }
 
 // FeedForward the input through the layer.
@@ -132,7 +132,7 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 		wg = &sync.WaitGroup{}
 		for idx, v := range d.Weights.(*tensor.Tensor2D).Data {
 			wg.Add(1)
-			pool.In <- workerpool.Workload{F: d.DotProduct, D: []any{&outputBefore.Data, v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
+			pool.In <- workerpool.Workload{F: d.DotProduct, D: []*[]float64{&outputBefore.Data, &v, &[]float64{d.Output.(*tensor.Tensor1D).Data[idx]}}, Wg: wg}
 		}
 	default:
 		// panic
@@ -147,7 +147,7 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 	// TODO: Add logic for using diffrent activation functions
 	for idx, v := range d.Output.(*tensor.Tensor1D).Data {
 		wg.Add(1)
-		pool.In <- workerpool.Workload{F: d.Activation, D: []any{&v, d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
+		pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
 	}
 	wg.Wait()
 }
