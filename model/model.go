@@ -22,6 +22,7 @@ type Model struct {
 	// The LayerArray of the Model.
 	LayerArray []layer.Layer // This Array will be used to store the layers in the right order.
 	Loss       tensor.Tensor
+	Output     []layer.Layer
 }
 
 // NewModel creates a new model. NewModel takes only the Input Layers of the Model and the number of worker threads.
@@ -43,6 +44,7 @@ func NewModel(mc *ModelConfig, worker int) (*Model, error) {
 		Layers:     mc.InputLayers,
 		Workerpool: workerpool.NewWorkerPool(worker),
 		LayerArray: la,
+		Output:     mc.OutputLayers,
 	}, nil
 }
 
@@ -59,11 +61,15 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 		l.(*layer.InputLayer).SetOutput(input[i])
 	}
 
-	// TODO: NOT FINISHED YET
 	for _, l := range m.LayerArray {
 		l.FeedForward(m.Workerpool)
 	}
-	return nil
+	// we will return a tensor array with the output of the output layers
+	output := make([]tensor.Tensor, len(m.Output))
+	for i, l := range m.Output {
+		output[i] = l.GetOutput()
+	}
+	return output
 }
 
 // FillLayerArray creates the layer array.
