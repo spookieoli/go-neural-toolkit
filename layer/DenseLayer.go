@@ -57,7 +57,7 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	return l
 }
 
-// SetWeighztInitMethod sets the weights initialization method.
+// SetWeightInitMethod sets the weights initialization method.
 func (d *DenseLayer) SetWeightInitMethod(method string) {
 	// Using refelect to get the function from the activation package.
 	o := reflect.ValueOf(&utils.Utilities).MethodByName(method)
@@ -174,9 +174,9 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 		wg.Wait()
 
 		// Now activate the output
-		for idx, v := range d.Output.(*tensor.Tensor1D).Data {
+		for _, v := range d.Output.(*tensor.Tensor1D).Data {
 			wg.Add(1)
-			pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
+			pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v}, Wg: wg}
 		}
 		wg.Wait()
 	default:

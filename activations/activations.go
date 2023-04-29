@@ -19,13 +19,13 @@ func init() {
 // Sigmoid function
 func (l *Activations) Sigmoid(f any) {
 	// The sigmoid function is defined like the tensoflow sigmoid function
-	*(f.([]*float64))[1] = 1 / (1 + math.Exp(-*(f.([]*float64))[0]))
+	*(f.([]*float64))[0] = 1 / (1 + math.Exp(-*(f.([]*float64))[0]))
 }
 
 // Tanh function
 func (l *Activations) Tanh(f any) {
 	// The tanh function is defined like the tensoflow tanh function
-	*(f.([]*float64))[1] = math.Tanh(*(f.([]*float64))[1])
+	*(f.([]*float64))[0] = math.Tanh(*(f.([]*float64))[0])
 }
 
 // Softmax function
@@ -44,9 +44,8 @@ func (l *Activations) Softmax(f any) {
 func (l *Activations) Relu(f any) {
 	// The relu function is defined like the tensoflow relu function
 	if *(f.([]*float64))[0] < 0 {
-		*(f.([]*float64))[1] = 0
+		*(f.([]*float64))[0] = 0
 	}
-	*(f.([]*float64))[1] = *(f.([]*float64))[0]
 }
 
 // LeakyRelu function
