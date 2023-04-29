@@ -33,10 +33,6 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l := &DenseLayer{
 		Units: units, UseBias: useBias, Name: name,
 	}
-	// if useBias is true, we add 1 to the number of units.
-	if useBias {
-		l.Units++
-	}
 	// Add the previous Layer as Before Layer in this Layer
 	l.SetBefore(previous)
 	// Create the weights of the layer.
@@ -83,7 +79,11 @@ func (d *DenseLayer) GetBefore() []Layer {
 
 // InitWeights initializes the weights of the layer.
 func (d *DenseLayer) InitWeights() {
-	d.Weights = tensor.CreateTensor2D([]int{d.Units, d.Before[0].GetUnits()})
+	if d.UseBias {
+		d.Weights = tensor.CreateTensor2D([]int{d.Units, d.Before[0].GetUnits() + 1})
+	} else {
+		d.Weights = tensor.CreateTensor2D([]int{d.Units, d.Before[0].GetUnits()})
+	}
 	return
 }
 
@@ -119,6 +119,10 @@ func (d *DenseLayer) DotProduct(f any) {
 	for idx, v := range *(f.([]*[]float64))[0] {
 		sum += v * (*(f.([]*[]float64))[1])[idx]
 	}
+	// If useBias is true, add the bias to the sum
+	if d.UseBias {
+		sum += 1.0 * (*(f.([]*[]float64))[1])[len(*(f.([]*[]float64))[1])-1]
+	}
 	(*(f.([]*[]float64))[2])[0] = sum
 }
 
@@ -126,28 +130,25 @@ func (d *DenseLayer) DotProduct(f any) {
 func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 	// Create the WaitGroup
 	var wg *sync.WaitGroup
+
 	// switch the type of the former output type - we are expecting fpr a tensor.Tensor1D with Data = []float64
 	switch outputBefore := d.GetBefore()[0].GetOutput().(type) {
 	case *tensor.Tensor1D:
 		wg = &sync.WaitGroup{}
-		for idx, v := range d.Weights.(*tensor.Tensor2D).Data {
+		for idx, _ := range d.Output.(*tensor.Tensor1D).Data {
 			wg.Add(1)
-			pool.In <- workerpool.Workload{F: d.DotProduct, D: []*[]float64{&outputBefore.Data, &v, &[]float64{d.Output.(*tensor.Tensor1D).Data[idx]}}, Wg: wg}
+			pool.In <- workerpool.Workload{F: d.DotProduct, D: []*[]float64{&outputBefore.Data, &d.Weights.(*tensor.Tensor2D).Data[idx], &[]float64{d.Output.(*tensor.Tensor1D).Data[idx]}}, Wg: wg}
 		}
+		wg.Wait()
+		// Now activate the output
+		for idx, v := range d.Output.(*tensor.Tensor1D).Data {
+			wg.Add(1)
+			pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
+		}
+		wg.Wait()
 	default:
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
 	}
-	wg.Wait()
-	// if useBias is true, we set the last value of the output to 1.
-	if d.UseBias {
-		d.Output.(*tensor.Tensor1D).Data[d.Units-1] = 1
-	}
-	// Now activate the output
-	// TODO: Add logic for using diffrent activation functions
-	for idx, v := range d.Output.(*tensor.Tensor1D).Data {
-		wg.Add(1)
-		pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v, &d.Output.(*tensor.Tensor1D).Data[idx]}, Wg: wg}
-	}
-	wg.Wait()
+
 }
