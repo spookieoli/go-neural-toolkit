@@ -1,6 +1,8 @@
 package activations
 
-import "math"
+import (
+	"math"
+)
 
 // empty struct
 type Activations struct {
