@@ -6,7 +6,6 @@ import (
 	"go-neural-toolkit/tensor"
 	"go-neural-toolkit/utils"
 	"go-neural-toolkit/workerpool"
-	"math/rand"
 	"reflect"
 	"strings"
 	"sync"
@@ -110,11 +109,8 @@ func (d *DenseLayer) InitWeights() {
 	if d.WeightInitMethod != "" {
 		d.WeightInitFunc(&d.Weights)
 	} else {
-		for idx, _ := range d.Weights.(*tensor.Tensor2D).Data {
-			for idy, _ := range d.Weights.(*tensor.Tensor2D).Data[idx] {
-				d.Weights.(*tensor.Tensor2D).Data[idx][idy] = rand.Float64()
-			}
-		}
+		// If no WeightInitMethod is given, use pseudo random values
+		utils.Utilities.RandomUniform(&d.Weights)
 	}
 	return
 }
