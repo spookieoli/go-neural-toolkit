@@ -48,6 +48,8 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l.WeightInitMethod = weightInitMethod
 	if l.WeightInitMethod == "" {
 		fmt.Println("No WeightInitMethod given - Init weights with random values")
+	} else {
+		l.SetWeightInitMethod(l.WeightInitMethod)
 	}
 	// Add the previous Layer as Before Layer in this Layer
 	l.SetBefore(previous)
