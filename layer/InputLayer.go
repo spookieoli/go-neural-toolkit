@@ -99,3 +99,13 @@ func (i *InputLayer) FeedForward(w *workerpool.WorkerPool) {
 func (i *InputLayer) SetOutput(t tensor.Tensor) {
 	i.Output = t
 }
+
+// GetDerivative returns the derivative of the layer.
+func (i *InputLayer) GetDerivative() tensor.Tensor {
+	return nil
+}
+
+// GetDelta returns the delta of the layer.
+func (i *InputLayer) GetDelta() tensor.Tensor {
+	return nil
+}

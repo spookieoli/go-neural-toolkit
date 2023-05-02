@@ -32,6 +32,12 @@ type DenseLayer struct {
 	WeightInitMethod string
 	// Weights initialization Function
 	WeightInitFunc func(any)
+	// The Derivative of the Activation Function
+	ActivationDerivative func(any)
+	// The Derivative results of the Activation Function
+	Derivative tensor.Tensor
+	// The Delta of the Layer
+	Delta tensor.Tensor
 }
 
 // Dense creates the Dense Layer.
@@ -154,6 +160,16 @@ func (d *DenseLayer) DotProduct(f any) {
 	*(f.([]any)[2].(*float64)) = sum
 }
 
+// GetDerivative returns the derivative of the layer.
+func (d *DenseLayer) GetDerivative() tensor.Tensor {
+	return d.Derivative
+}
+
+// GetDelta returns the delta of the layer.
+func (d *DenseLayer) GetDelta() tensor.Tensor {
+	return d.Delta
+}
+
 // FeedForward the input through the layer.
 func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 	// Create the WaitGroup
@@ -179,5 +195,4 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
 	}
-
 }

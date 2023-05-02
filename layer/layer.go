@@ -29,4 +29,8 @@ type Layer interface {
 	GetOutput() tensor.Tensor
 	// FeedForward the input through the layer.
 	FeedForward(pool *workerpool.WorkerPool)
+	// Get the Derivative of the layer.
+	GetDerivative() tensor.Tensor
+	// GetDelta returns the delta of the layer.
+	GetDelta() tensor.Tensor
 }
