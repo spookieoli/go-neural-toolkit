@@ -22,6 +22,8 @@ type InputLayer struct {
 	UseBias bool
 	// Activation function of the layer.
 	Activation func(any)
+	// IsOutputLayer returns true if the layer is an output layer.
+	IsOutputLayer bool
 }
 
 // Input creates the Input Layer.
@@ -100,12 +102,17 @@ func (i *InputLayer) SetOutput(t tensor.Tensor) {
 	i.Output = t
 }
 
-// GetDerivative returns the derivative of the layer.
-func (i *InputLayer) GetDerivative() tensor.Tensor {
-	return nil
+// GetErrorTensor returns the error tensor of the layer.
+func (i *InputLayer) GetErrorTensor() []*tensor.Tensor2D {
+	return nil // Input Layer has no error tensor
 }
 
-// GetDelta returns the delta of the layer.
-func (i *InputLayer) GetDelta() tensor.Tensor {
-	return nil
+// IsOutput return true if layer is output layer
+func (d *InputLayer) IsOutput() bool {
+	return len(d.NextLayer) == 0
+}
+
+// SetisOutput sets the layer as an output layer.
+func (d *InputLayer) SetIsOutput(b bool) {
+	d.IsOutputLayer = b
 }

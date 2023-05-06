@@ -34,10 +34,10 @@ type DenseLayer struct {
 	WeightInitFunc func(any)
 	// The Derivative of the Activation Function
 	ActivationDerivative func(any)
-	// The Derivative results of the Activation Function
-	Derivative tensor.Tensor
-	// The Delta of the Layer
-	Delta tensor.Tensor
+	// The ErrorTensor of the Layer
+	ErrorTensor []*tensor.Tensor2D
+	// IsOutputLayer returns true if the layer is an output layer.
+	IsOutputLayer bool
 }
 
 // Dense creates the Dense Layer.
@@ -57,6 +57,8 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	l.InitWeights()
 	// Set the Output of the Layer
 	l.Output = tensor.CreateTensor1D(l.Units)
+	// Every neuron has its own ErrorTensor - the Errortensor is a Tensor2d
+	l.ErrorTensor = l.CreateErrorTensor()
 	// Set the activation // TODO: cases not working for me - why? Not importable?
 	l.SetActivation(strings.Title(activation))
 	// Add this Layer as next Layer in the previous Layer
@@ -84,6 +86,11 @@ func (d *DenseLayer) SetActivation(activation string) {
 	} else {
 		d.Activation = activations.Activation.Linear
 	}
+}
+
+// Create the Errortensors for the Layer
+func (d *DenseLayer) CreateErrorTensor() []*tensor.Tensor2D {
+	return []*tensor.Tensor2D{}
 }
 
 // SetNextLayer sets the next layer.
@@ -148,6 +155,11 @@ func (d *DenseLayer) GetUnits() int {
 	return d.Units
 }
 
+// GetErrorTensor returns the error tensor of the layer.
+func (d *DenseLayer) GetErrorTensor() []*tensor.Tensor2D {
+	return d.ErrorTensor
+}
+
 // DotProduct function calculates the dot product of two vectors.
 func (d *DenseLayer) DotProduct(f any) {
 	// f[0] is the input tensor, f[1] is the weight tensor, f[2] is the output tensor
@@ -162,14 +174,14 @@ func (d *DenseLayer) DotProduct(f any) {
 	*(f.([]any)[2].(*float64)) = sum
 }
 
-// GetDerivative returns the derivative of the layer.
-func (d *DenseLayer) GetDerivative() tensor.Tensor {
-	return d.Derivative
+// IsOutput returns true if the layer is an output layer.
+func (d *DenseLayer) IsOutput() bool {
+	return len(d.NextLayer) == 0
 }
 
-// GetDelta returns the delta of the layer.
-func (d *DenseLayer) GetDelta() tensor.Tensor {
-	return d.Delta
+// SetisOutput sets the layer as an output layer.
+func (d *DenseLayer) SetIsOutput(b bool) {
+	d.IsOutputLayer = b
 }
 
 // FeedForward the input through the layer.

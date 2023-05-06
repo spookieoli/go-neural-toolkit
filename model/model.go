@@ -39,6 +39,10 @@ func NewModel(mc *ModelConfig, worker int) (*Model, error) {
 	la := make([]layer.Layer, 0, 20)
 	// Fill rest of the Layers in the Layer Array
 	FillLayerArray(mc.InputLayers, &la)
+	// Tell the Outputlayers they are outputs
+	for _, l := range mc.OutputLayers {
+		l.(layer.Layer).SetIsOutput(true)
+	}
 	// Create the Model
 	return &Model{
 		Layers:     mc.InputLayers,
