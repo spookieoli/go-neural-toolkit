@@ -35,7 +35,7 @@ type DenseLayer struct {
 	// The Derivative of the Activation Function
 	ActivationDerivative func(any)
 	// The ErrorTensor of the Layer
-	ErrorTensor []*tensor.Tensor2D
+	ErrorTensor tensor.Tensor2D
 	// IsOutputLayer returns true if the layer is an output layer.
 	IsOutputLayer bool
 }
@@ -89,8 +89,8 @@ func (d *DenseLayer) SetActivation(activation string) {
 }
 
 // Create the Errortensors for the Layer
-func (d *DenseLayer) CreateErrorTensor() []*tensor.Tensor2D {
-	return []*tensor.Tensor2D{}
+func (d *DenseLayer) CreateErrorTensor() tensor.Tensor2D {
+	return tensor.Tensor2D{}
 }
 
 // SetNextLayer sets the next layer.
@@ -156,7 +156,7 @@ func (d *DenseLayer) GetUnits() int {
 }
 
 // GetErrorTensor returns the error tensor of the layer.
-func (d *DenseLayer) GetErrorTensor() []*tensor.Tensor2D {
+func (d *DenseLayer) GetErrorTensor() tensor.Tensor2D {
 	return d.ErrorTensor
 }
 
@@ -182,6 +182,10 @@ func (d *DenseLayer) IsOutput() bool {
 // SetisOutput sets the layer as an output layer.
 func (d *DenseLayer) SetIsOutput(b bool) {
 	d.IsOutputLayer = b
+}
+
+// GetInput gets the data for the ErrorTensor
+func (d *DenseLayer) GetInput() {
 }
 
 // FeedForward the input through the layer.

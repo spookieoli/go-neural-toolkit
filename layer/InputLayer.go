@@ -103,16 +103,21 @@ func (i *InputLayer) SetOutput(t tensor.Tensor) {
 }
 
 // GetErrorTensor returns the error tensor of the layer.
-func (i *InputLayer) GetErrorTensor() []*tensor.Tensor2D {
-	return nil // Input Layer has no error tensor
+func (i *InputLayer) GetErrorTensor() tensor.Tensor2D {
+	return tensor.Tensor2D{} // Input Layer has no error tensor
 }
 
 // IsOutput return true if layer is output layer
-func (d *InputLayer) IsOutput() bool {
-	return len(d.NextLayer) == 0
+func (i *InputLayer) IsOutput() bool {
+	return len(i.NextLayer) == 0
 }
 
 // SetisOutput sets the layer as an output layer.
-func (d *InputLayer) SetIsOutput(b bool) {
-	d.IsOutputLayer = b
+func (i *InputLayer) SetIsOutput(b bool) {
+	i.IsOutputLayer = b
+}
+
+// GetInput returns the input of the layer.
+func (i *InputLayer) GetInput() {
+	return
 }
