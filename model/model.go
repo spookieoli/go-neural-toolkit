@@ -66,7 +66,7 @@ func (m *Model) Predict(input []tensor.Tensor) []tensor.Tensor {
 	}
 
 	for _, l := range m.LayerArray {
-		l.FeedForward(m.Workerpool, false) // No training
+		l.FeedForward(m.Workerpool) // No training
 	}
 	// we will return a tensor array with the output of the output layers
 	output := make([]tensor.Tensor, len(m.Output))
