@@ -6,6 +6,7 @@ import (
 	"go-neural-toolkit/tensor"
 	"go-neural-toolkit/utils"
 	"go-neural-toolkit/workerpool"
+	"os"
 	"reflect"
 	"strings"
 	"sync"
@@ -58,7 +59,8 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	// Set the Output of the Layer
 	l.Output = tensor.CreateTensor1D(l.Units)
 	// Every neuron has its own ErrorTensor - the Errortensor is a Tensor2d
-	l.ErrorTensor = tensor.CreateTensor2D([]int{0, 4})
+	l.ErrorTensor = tensor.CreateTensor2D([]int{0, 0})
+	l.ErrorTensor.Data = make([][]float64, 0)
 	// Set the activation // TODO: cases not working for me - why? Not importable?
 	l.SetActivation(strings.Title(activation))
 	// Add this Layer as next Layer in the previous Layer
@@ -209,6 +211,9 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 		//t := tensor.CreateTensor2D([]int{d.Units * d.Before[0].GetUnits(), 4})
 		fmt.Println(d.ErrorTensor)
 		// TODO add data to the errortensor
+		d.ErrorTensor.Data = append(d.ErrorTensor.Data, []float64{1.0, 2.0, 3.0, 4.0})
+		// Exit the program
+		os.Exit(0)
 
 	default:
 		// panic
