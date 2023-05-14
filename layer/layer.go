@@ -29,12 +29,10 @@ type Layer interface {
 	GetOutput() tensor.Tensor
 	// FeedForward the input through the layer.
 	FeedForward(pool *workerpool.WorkerPool)
-	// GetErrorTensor returns the error tensor of the layer. (Input, Error, Derivative, Delta)
-	GetErrorTensor() tensor.Tensor2D
 	// SetIsOutput set layer as output layer
 	SetIsOutput(bool)
 	//IsOutput return true if layer is output layer
 	IsOutput() bool
-	// GetInput Get the inputs, derivatives, errors and deltas of the layer.
-	GetInput()
+	// GetErrorData Get the inputs, derivatives, errors and deltas of the layer.
+	GetErrorData() *tensor.Tensor2D
 }

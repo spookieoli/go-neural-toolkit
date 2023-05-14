@@ -35,7 +35,7 @@ type DenseLayer struct {
 	// The Derivative of the Activation Function
 	ActivationDerivative func(any)
 	// The ErrorTensor of the Layer
-	ErrorTensor tensor.Tensor2D
+	ErrorTensor *tensor.Tensor2D
 	// IsOutputLayer returns true if the layer is an output layer.
 	IsOutputLayer bool
 }
@@ -58,7 +58,7 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	// Set the Output of the Layer
 	l.Output = tensor.CreateTensor1D(l.Units)
 	// Every neuron has its own ErrorTensor - the Errortensor is a Tensor2d
-	l.ErrorTensor = l.CreateErrorTensor()
+	l.ErrorTensor = nil
 	// Set the activation // TODO: cases not working for me - why? Not importable?
 	l.SetActivation(strings.Title(activation))
 	// Add this Layer as next Layer in the previous Layer
@@ -68,7 +68,7 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 
 // SetWeightInitMethod sets the weights initialization method.
 func (d *DenseLayer) SetWeightInitMethod(method string) {
-	// Using refelect to get the function from the activation package.
+	// Using reflect to get the function from the activation package.
 	o := reflect.ValueOf(&utils.Utilities).MethodByName(method)
 	if o.IsValid() {
 		d.WeightInitFunc = o.Interface().(func(any))
@@ -86,11 +86,6 @@ func (d *DenseLayer) SetActivation(activation string) {
 	} else {
 		d.Activation = activations.Activation.Linear
 	}
-}
-
-// Create the Errortensors for the Layer
-func (d *DenseLayer) CreateErrorTensor() tensor.Tensor2D {
-	return tensor.Tensor2D{}
 }
 
 // SetNextLayer sets the next layer.
@@ -156,7 +151,7 @@ func (d *DenseLayer) GetUnits() int {
 }
 
 // GetErrorTensor returns the error tensor of the layer.
-func (d *DenseLayer) GetErrorTensor() tensor.Tensor2D {
+func (d *DenseLayer) GetErrorTensor() *tensor.Tensor2D {
 	return d.ErrorTensor
 }
 
@@ -185,7 +180,8 @@ func (d *DenseLayer) SetIsOutput(b bool) {
 }
 
 // GetInput gets the data for the ErrorTensor
-func (d *DenseLayer) GetInput() {
+func (d *DenseLayer) GetErrorData() *tensor.Tensor2D {
+	return d.ErrorTensor
 }
 
 // FeedForward the input through the layer.
@@ -209,6 +205,11 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 			pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v}, Wg: wg}
 		}
 		wg.Wait()
+		// Fist create a tensor2d with shape of units * inputs
+		t := tensor.CreateTensor2D([]int{d.Units * d.Before[0].GetUnits(), 4})
+		fmt.Println(t)
+		// TODO add data to the errortensor
+
 	default:
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
