@@ -58,7 +58,7 @@ func Dense(units int, previous Layer, useBias bool, activation string, name stri
 	// Set the Output of the Layer
 	l.Output = tensor.CreateTensor1D(l.Units)
 	// Every neuron has its own ErrorTensor - the Errortensor is a Tensor2d
-	l.ErrorTensor = nil
+	l.ErrorTensor = tensor.CreateTensor2D([]int{0, 4})
 	// Set the activation // TODO: cases not working for me - why? Not importable?
 	l.SetActivation(strings.Title(activation))
 	// Add this Layer as next Layer in the previous Layer
@@ -206,8 +206,8 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 		}
 		wg.Wait()
 		// Fist create a tensor2d with shape of units * inputs
-		t := tensor.CreateTensor2D([]int{d.Units * d.Before[0].GetUnits(), 4})
-		fmt.Println(t)
+		//t := tensor.CreateTensor2D([]int{d.Units * d.Before[0].GetUnits(), 4})
+		fmt.Println(d.ErrorTensor)
 		// TODO add data to the errortensor
 
 	default:
