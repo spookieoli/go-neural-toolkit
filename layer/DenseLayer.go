@@ -207,14 +207,14 @@ func (d *DenseLayer) FeedForward(pool *workerpool.WorkerPool) {
 			pool.In <- workerpool.Workload{F: d.Activation, D: []*float64{&v}, Wg: wg}
 		}
 		wg.Wait()
-		// Fist create a tensor2d with shape of units * inputs
-		//t := tensor.CreateTensor2D([]int{d.Units * d.Before[0].GetUnits(), 4})
-		fmt.Println(d.ErrorTensor)
-		// TODO add data to the errortensor
-		d.ErrorTensor.Data = append(d.ErrorTensor.Data, []float64{1.0, 2.0, 3.0, 4.0})
-		// Exit the program
+		// Add Data to the error tensor for every neuron and every input
+		for i := 0; i < d.Units; i++ {
+			for j := 0; j < len(d.Before[0].GetOutput().GetData().([]float64)); j++ {
+				d.ErrorTensor.Data = append(d.ErrorTensor.Data, []float64{d.Before[0].GetOutput().GetData().([]float64)[j], 2.0, 3.0, 4.0})
+			}
+		}
+		fmt.Println(d.ErrorTensor.Data)
 		os.Exit(0)
-
 	default:
 		// panic
 		panic("Expecting a tensor.Tensor1D to layer " + d.GetName() + " but got " + reflect.TypeOf(outputBefore).String())
